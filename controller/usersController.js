@@ -24,7 +24,8 @@ controller.getUsers = async (req, res) => {
 
 controller.createUsers = async (req, res) => {
     try {
-        const { username, password } = req.body;
+        let username = req.body.username
+        let password = req.body.password
 
         const existingUser = await userModel.getByUsername(username);
 
@@ -45,7 +46,8 @@ controller.createUsers = async (req, res) => {
         const user = await userModel.createUsers(newUser);
 
         // Create a JWT token upon successful registration
-        const token = jwt.sign({ username: user.username }, 'secretcode', { expiresIn: '1h' });
+        console.log("user create", newUser)
+        const token = jwt.sign({ username: newUser.username }, 'secretcode', { expiresIn: '1h' });
 
         res.status(201).json({
             code: 201,
@@ -79,9 +81,10 @@ controller.login = async (req, res) => {
 
         if (passwordMatch) {
             // Create a JWT token
+            console.log("user login", user)
             const token = jwt.sign({ username: user.username }, 'secretcode', { expiresIn: '1h' });
             
-            console.log('Login token:', token);
+            // console.log('Login token:', token);
             res.status(200).json({
                 code: 200,
                 message: 'Login Success',
